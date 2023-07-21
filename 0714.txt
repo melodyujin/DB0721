@@ -1,0 +1,56 @@
+//15-1.사용자 관리
+C:\Users\User>sqlplus
+
+Enter user-name: SCOTT
+Enter password:
+
+//사용자 생성
+//SCOTT 계정으로 사용자 생성하기
+SQL> CREATE USER ORCLSTUDY
+  2  IDENTIFIED BY ORACLE;
+IDENTIFIED BY ORACLE
+              *
+ERROR at line 2:
+ORA-01031: insufficient privileges
+
+SQL> EXIT
+
+C:\Users\User>SQLPLUS
+
+Enter user-name: SYSTEM
+Enter password:
+
+//SYSTEM 사용자로 접속 후 사용자 생성하기(SQL*PLUS)
+SQL> CREATE USER ORCLSTUDY
+  2  IDENTIFIED BY ORACLE;
+
+//SYSTEM 사용자로 접속 후 ORCLSTUDY 사용자에게 권한 부여하기
+SQL> GRANT CREATE SESSION TO ORCLSTUDY;
+
+//오라클 사용자의 변경과 삭제
+//사용자 정보(패스워드)변경하기
+SQL> ALTER USER ORCLSTUDY
+  2  IDENTIFIED BY ORCL;
+
+//오라클 사용자 삭제
+//사용자 삭제
+SQL> DROP USER ORCLSTUDY;
+
+//사용자와 객체 모두 삭제하기
+DROP USER ORCLSTUDY CASCADE;
+
+//15-2.권한관리
+C:\Users\User>sqlplus
+
+Enter user-name: system
+Enter password:
+
+//SYSTEM 계정으로 접속하여 사용자(ORCLSTUDY) 생성하기
+SQL> CREATE USER ORCLSTUDY
+  2  IDENTIFIED BY ORACLE;
+
+//사용자 권한 부여하기
+SQL> GRANT RESOURCE, CREATE SESSION, CREATE TABLE TO ORCLSTUDY;
+
+//시스템 권한 취소
+SQL> REVOKE RESOURCE, CREATE TABLE FROM ORCLSTUDY;

@@ -1,0 +1,141 @@
+테이블스페이스
+
+C:\Users\User>sqlplus
+
+Enter user-name: system
+Enter password:
+
+//Tablespace 종류 확인
+SQL> select tablespace_name, contents from dba_tablespaces;
+
+SQL> create tablespace abc datafile 'c:\madang\oradata\abc.dbf' size 50m;
+
+SQL> select tablespace_name, contents, extent_management,
+  2  allocation_type, segment_space_management, bigfile
+  3  from dba_tablespaces
+  4  where tablespace_name='ABC';
+
+SQL> select tablespace_name, contents, extent_management,
+  2  allocation_type, segment_space_management, bigfile
+  3          from user_tablespaces
+  4  where tablespace_name='USERS';
+
+//테이블스페이스 삭제하기
+SQL> DROP TABLESPACE abc
+  2  INCLUDING CONTENTS AND DATAFILES;
+
+
+//신규 로그인 사용자 계정 생성하기
+SQL> CREATE USER mdguest
+  2  IDENTIFIED BY mduest;
+
+SQL> CREATE USER mdguest2
+  2  IDENTIFIED BY mdguest2;
+
+//권한 허가
+SQL> GRANT CONNECT, RESOURCE TO mdguest;
+
+SQL> GRANT CONNECT, RESOURCE TO mdguest2;
+
+SQL> exit
+
+C:\Users\User>sqlplus
+
+Enter user-name: mdguest2
+Enter password:
+
+SQL> create tablespace md_tbs datafile 'C:\madang\oradata\md_tbs.dbf' size 50m;
+
+SQL> create tablespace md_tbs2 datafile 'C:\oraclexe\app\oracle\oradata\XE\md_tbs2.dbf' size 50m;
+
+SQL> exit
+
+C:\Users\User>sqlplus
+
+Enter user-name: madang
+Enter password:
+
+//(madang 계정) 권한 허가 GRANT
+SQL> GRANT SELECT ON madang.Book TO mdguest;
+
+SQL> GRANT SELECT, UPDATE ON Customer TO mdguest WITH GRANT OPTION;
+
+//(mdguest 계정) 권한 허가
+SQL> GRANT SELECT ON madang.Book TO mdguest2;
+
+SQL> GRANT SELECT ON madang.Customer TO mdguest2;
+
+//(madang 계정) 권한 허가
+SQL> GRANT SELECT ON Orders TO PUBLIC;
+
+//(madang 계정) 권한 취소
+SQL> REVOKE SELECT ON Book FROM mdguest;
+
+SQL> REVOKE SELECT ON Customer FROM mdguest;
+
+SQL> exit
+
+역할 - ROLE
+
+//(system 계정)역할 생성
+SQL> CREATE ROLE programmer;
+
+//(system 계정)programmer 역할에 CREATE ANY TABLE, CREATE ANY VIEW 권한 부여
+SQL> GRANT CREATE ANY TABLE, CREATE ANY VIEW TO programmer;
+
+//(system 계정)mdguest에 programmer 역할의 권한 부여
+SQL> GRANT programmer TO mdguest;
+
+SQL> exit
+
+C:\Users\User>sqlplus
+
+Enter user-name: mdguest
+Enter password:
+
+//(mdguest 계정) mdguest2 사용자에게 다음의 테이블을 생성하고 데이터를 삽입
+SQL> CREATE TABLE mdguest2.NEWTABLE(
+  2  myname VARCHAR2(40),
+  3  myphone VARCHAR2(20)
+  4  );
+
+SQL> EXIT
+
+C:\Users\User>sqlplus
+
+Enter user-name: system
+Enter password:
+
+//(system 계정) programmer 역할에 mdguest2.NEWTABLE 테이블에 대한 SELECT와 INSERT 권한을 부여
+ 및 (mdguset 계정) INSERT 문을 수행한 후 조회하시오.
+SQL> GRANT SELECT, INSERT ON mdguest2.NEWTABLE TO programmer;
+
+//(mdguest 계정)
+SQL> INSERT INTO mdguest2.NEWTABLE(myname, myphone) VALUES ('홍길동', '000-000-0100');
+
+SQL> SELECT * FROM mdguest2.NEWTABLE;
+
+//(system 계정) mdguest2.NEWTABLE 계정의 SELECT 권한을 회수하시오. 
+그리고 (mdguest 계정) mdguest2.NEWTABLE 테이블을 조회(SELECT)해 보시오.
+
+SQL> REVOKE SELECT ON mdguest2.NEWTABLE FROM programmer; (system 계정)
+
+SQL> SELECT * FROM mdguest2.NEWTABLE; (mdguest 계정)
+
+//(system 계정) programmer 역할을 제거하시오. mdguest2.NEWTABLE 역시 제거하시오
+
+SQL> DROP ROLE programmer;
+
+SQL> DROP TABLE mdguest2.NEWTABLE;
+
+
+
+
+
+
+
+
+
+
+
+
